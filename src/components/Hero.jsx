@@ -94,10 +94,6 @@ const Hero = () => {
       </div>
     </div>
 
-    // <div className="bg-gray-200 py-20 text-center h-full">
-    //     <h1 className="text-4xl font-bold" >Welcome to our Store</h1>
-    //     <p className="mt-4 text-lg" >Discover the best products here!</p>
-    // </div>
   );
 };
 
