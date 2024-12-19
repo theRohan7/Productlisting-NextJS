@@ -1,14 +1,43 @@
 'use client'
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { getproducts } from "@/services/productServices";
+
+
+const SCROLL_POSITION = 'scrollPosition'
 
 const ProductListing = ({ initialProducts }) => {
     const [products, setProducts] = useState(initialProducts)
     const [limit] = useState(12)
     const [skip, setSkip] = useState(initialProducts.length)
     const [loading, setLoading] = useState(false)
+
+    const handleScroll = useCallback(() => {
+      const position = window.scrollY;
+      localStorage.setItem(SCROLL_POSITION, position.toString());
+    },[])
+
+    const restoreScrollPosition = useCallback(() => {
+      const savedPosition = localStorage.getItem(SCROLL_POSITION);
+      if (savedPosition) {
+        window.scrollTo({
+          top: parseInt(savedPosition,10),
+          behavior: 'instant'
+        })
+      }
+    },[])
+
+    useEffect(() => {
+      window.addEventListener('scroll', handleScroll);
+
+      setTimeout(restoreScrollPosition, 0)
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      }
+
+    },[handleScroll, restoreScrollPosition])
 
     const loadMore = async () => {
         setLoading(true)
@@ -36,6 +65,7 @@ const ProductListing = ({ initialProducts }) => {
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center mx-auto mt-5"
             onClick={loadMore}
+            disabled={loading}
           >
             {loading ? "Loading..." : "Load More"}
           </button>
